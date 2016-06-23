@@ -1,0 +1,403 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:等线;
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:"Microsoft YaHei UI";
+	panose-1:2 11 5 3 2 2 4 2 2 4;}
+@font-face
+	{font-family:"\@Microsoft YaHei UI";
+	panose-1:2 11 5 3 2 2 4 2 2 4;}
+@font-face
+	{font-family:"\@等线";
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:10.5pt;
+	font-family:等线;}
+.MsoChpDefault
+	{font-family:等线;}
+ /* Page Definitions */
+ @page WordSection1
+	{size:595.3pt 841.9pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	layout-grid:15.6pt;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+
+</head>
+
+<body lang=ZH-CN style='text-justify-trim:punctuation'>
+
+<div class=WordSection1 style='layout-grid:15.6pt'>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>linux</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>内核中操作文件</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>在<span
+lang=EN-US>VFS</span>的支持下，用户态进程读写任何类型的文件系统都可以使用<span lang=EN-US>read</span>和<span
+lang=EN-US>write</span>着两个系统调用，但是在<span lang=EN-US>linux</span>内核中没有这样的系统调用我们如何操作文件呢？我们知道<span
+lang=EN-US>read</span>和<span lang=EN-US>write</span>在进入内核态之后，实际执行的是<span
+lang=EN-US>sys_read</span>和<span lang=EN-US>sys_write</span>，但是查看内核源代码，发现这些操作文件的函数都没有导出<span
+lang=EN-US>(</span>使用<span lang=EN-US>EXPORT_SYMBOL</span>导出<span lang=EN-US>)</span>，也就是说在内核模块中是不能使用的，那如何是好？<span
+lang=EN-US>     </span>通过查看<span lang=EN-US>sys_open</span>的源码我们发现，其主要使用了<span
+lang=EN-US>do_filp_open()</span>函数，该函数在<span lang=EN-US>fs/namei.c</span>中，而在该文件中，<span
+lang=EN-US>filp_open</span>函数也是调用了<span lang=EN-US>do_filp_open</span>函数，并且接口和<span
+lang=EN-US>sys_open</span>函数极为相似，调用参数也和<span lang=EN-US>sys_open</span>一样，并且使用<span
+lang=EN-US>EXPORT_SYMBOL</span>导出了，所以我们猜想该函数可以打开文件，功能和<span lang=EN-US>open</span>一样。使用同样的查找方法，我们找出了一组在内核中操作文件的函数，如下：</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>功能
+函数原型<span lang=EN-US>   </span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>打开文件<span
+lang=EN-US> struct file *filp_open(const char *filename, int flags, int mode)</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>读取文件<span
+lang=EN-US> ssize_t vfs_read(struct file *file, char __user *buf, size_t count,
+loff_t *pos)</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>写文件<span
+lang=EN-US> ssize_t vfs_write(struct file *file, const char __user *buf, size_t
+count, loff_t *pos)</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>关闭文件<span
+lang=EN-US> int filp_close(struct file *filp, fl_owner_t id)</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>我们注意到在<span
+lang=EN-US>vfs_read</span>和<span lang=EN-US>vfs_write</span>函数中，其参数<span
+lang=EN-US>buf</span>指向的用户空间的内存地址，如果我们直接使用内核空间的指针，则会返回<span lang=EN-US>-EFALUT</span>。所以我们需要使用<span
+lang=EN-US>  set_fs()</span>和<span lang=EN-US>get_fs()</span>宏来改变内核对内存地址检查的处理方式<span
+lang=EN-US>.</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>系统调用本来是提供给用户空间的程序访问的，所以，对传递给它的参数（比如上面的<span
+lang=EN-US>buf</span>），它默认会认为来自用户空间，<span lang=EN-US>vfs_write</span>函数中为了保护内核空间，一般会用<span
+lang=EN-US>get_fs()</span>得到的值来和<span lang=EN-US>USER_DS</span>进行比较，从而防止用户空间程序<span
+lang=EN-US>“</span>蓄意<span lang=EN-US>”</span>破坏内核空间；</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>而现在要在内核空间使用系统调用，此时传递给<span
+lang=EN-US>vfs_write</span>的参数地址就是内核空间的地址了，在<span lang=EN-US>USER_DS</span>之上<span
+lang=EN-US>(USER_DS ~ KERNEL_DS)</span>，如果不做任何其它处理，在<span lang=EN-US>vfs_write</span>函数中，会认为该地址超过了<span
+lang=EN-US>USER_DS</span>范围，所以会认为是用户空间的<span lang=EN-US>“</span>蓄意破坏<span
+lang=EN-US>”</span>，从而不允许进一步的执行； 为了解决这个问题；<span lang=EN-US> set_fs(KERNEL_DS);</span>将其能访问的空间限制扩大到<span
+lang=EN-US>KERNEL_DS,</span>这样就可以在内核顺利使用系统调用了！</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>/*
+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> *
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>获取文件大小<span
+lang=EN-US> </span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> *
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>参数为获得的文件<span
+lang=EN-US>file</span>结构体<span lang=EN-US> </span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> *
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>返回文件大小<span
+lang=EN-US> </span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> *
+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> */</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>static
+loff_t kernel_file_size(struct file *file) </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>{
+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+inode = file-&gt;f_dentry-&gt;d_inode; </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+fsize = inode-&gt;i_size; </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+printk(KERN_ALERT &quot;size = %d\n&quot;,(int)fsize); </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+return fsize; </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>}
+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/init.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/module.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/kernel.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/slab.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/fs.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/errno.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/types.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/cdev.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/string.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;asm/system.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;asm/uaccess.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;asm/unistd.h&gt; </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/sched.h&gt;  //wake_up_process()</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/kthread.h&gt; //kthread_create() kthread_run()</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/err.h&gt; //IS_ERR() PTR_ERR()</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;linux/completion.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>MODULE_LICENSE(&quot;GPL&quot;);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+hello_init(void)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>{</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>loff_t
+pos;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>mm_segment_t
+old_fs;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>struct
+file *fp = NULL;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>void
+*buf=kmalloc(100,GFP_KERNEL);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>memset(buf,0,100);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>strcat(buf,&quot;sssssssssss&quot;);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fp=filp_open(&quot;/home/kkk/ssstxt&quot;,O_RDWR
+| O_CREAT,0644);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>old_fs=get_fs();</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>set_fs(KERNEL_DS);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>pos=0;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>vfs_write(fp,buf,100,&amp;pos);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>set_fs(old_fs);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>filp_close(fp,NULL);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>kfree(buf);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+return 0;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>}</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>void
+hello_exit(void)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>{</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>}</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>module_init(hello_init);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>module_exit(hello_exit);</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>

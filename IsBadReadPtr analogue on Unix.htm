@@ -1,0 +1,84 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:"Microsoft YaHei UI";
+	panose-1:2 11 5 3 2 2 4 2 2 4;}
+@font-face
+	{font-family:"\@Microsoft YaHei UI";
+	panose-1:2 11 5 3 2 2 4 2 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:10.5pt;
+	font-family:等线;}
+.MsoChpDefault
+	{font-family:等线;}
+ /* Page Definitions */
+ @page WordSection1
+	{size:595.3pt 841.9pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	layout-grid:15.6pt;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+
+</head>
+
+<body lang=ZH-CN style='text-justify-trim:punctuation'>
+
+<div class=WordSection1 style='layout-grid:15.6pt'>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>IsBadReadPtr
+analogue on Unix</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>The
+usual way to do this on POSIX systems is to use the write() system call. It
+will return EFAULT in errno rather than raising a signal if the memory cannot
+be read:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+nullfd = open(&quot;/dev/random&quot;, O_WRONLY);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>if
+(write(nullfd, pointer, size) &lt; 0)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>{</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+/* Not OK */</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>}</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>close(nullfd);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>(/dev/random
+is a good device to use for this on Linux, because it can be written by any
+user and will actually try to read the memory given. On OSes without
+/dev/random or where it isn't writeable, try /dev/null). Another alternative
+would be an anonymous pipe, but if you want to test a large region you'll need
+to regularly clear the reading end of the pipe.</span></p>
+
+</div>
+
+</body>
+
+</html>

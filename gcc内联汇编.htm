@@ -1,0 +1,887 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:等线;
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:"Microsoft YaHei UI";
+	panose-1:2 11 5 3 2 2 4 2 2 4;}
+@font-face
+	{font-family:"\@Microsoft YaHei UI";
+	panose-1:2 11 5 3 2 2 4 2 2 4;}
+@font-face
+	{font-family:"\@等线";
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:10.5pt;
+	font-family:等线;}
+.MsoChpDefault
+	{font-family:等线;}
+ /* Page Definitions */
+ @page WordSection1
+	{size:595.3pt 841.9pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	layout-grid:15.6pt;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+
+</head>
+
+<body lang=ZH-CN style='text-justify-trim:punctuation'>
+
+<div class=WordSection1 style='layout-grid:15.6pt'>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>gcc</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>内联汇编</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>在<span
+lang=EN-US> AT&amp;T </span>汇编格式中，操作数的字长由操作符的最后一个字母决定，后缀<span lang=EN-US>'b'</span>、<span
+lang=EN-US>'w'</span>、<span lang=EN-US>'l'</span>分别表示操作数为字节（<span lang=EN-US>byte</span>，<span
+lang=EN-US>8 </span>比特）、字（<span lang=EN-US>word</span>，<span lang=EN-US>16 </span>比特）和长字（<span
+lang=EN-US>long</span>，<span lang=EN-US>32</span>比特）</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>+------------------------------+------------------------------------+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|      
+Intel Code             |      AT&amp;T Code                     |</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>+------------------------------+------------------------------------+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+mov     eax,1                |  movl    $1,%eax                   |   </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+mov     ebx,0ffh             |  movl    $0xff,%ebx                |   </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+int     80h                  |  int     $0x80                     |   </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+mov     ebx, eax             |  movl    %eax, %ebx                |</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+mov     eax,[ecx]            |  movl    (%ecx),%eax               |</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+mov     eax,[ebx+3]          |  movl    3(%ebx),%eax              | </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+mov     eax,[ebx+20h]        |  movl    0x20(%ebx),%eax           |</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+add     eax,[ebx+ecx*2h]     |  addl    (%ebx,%ecx,0x2),%eax      |</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+lea     eax,[ebx+ecx]        |  leal    (%ebx,%ecx),%eax          |</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>|
+sub     eax,[ebx+ecx*4h-20h] |  subl    -0x20(%ebx,%ecx,0x4),%eax |</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>+------------------------------+------------------------------------+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>gcc</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>的内联语法：</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>asm
+(</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>语句模板</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>:
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>输出部分</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>:
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>输入部分</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>:
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>破坏描述</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>先来说语句模板，这里的语句即为<span
+lang=EN-US>AT&amp;T</span>的基本语法，与<span lang=EN-US>MASM</span>不同的是这里不能直接使用局部变量，倒是可以引用全局变量，指令之间使用<span
+lang=EN-US>“\n\t” </span>分割</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>在指令部分除了使用<span
+lang=EN-US> AT&amp;T</span>标准语法之外，还可以有最多<span lang=EN-US>10</span>个占位符：<span
+lang=EN-US>%0, %1, … , %9</span>，他们出现的次序与操作数相对应，另外，可在<span lang=EN-US>%</span>和数字之间插入字符<span
+lang=EN-US>w, h, b</span>分别表示访问操作数中的低字，低字中的高字节和低字中的低字节。这里可能说的比较糊涂，不过没关系，介绍之后的部分自然会明白。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>输出部分指示此内嵌汇编输出结果保存到什么变量中，这些变量通过占位符作为汇编语句中的操作数。当输出列表多于一个变量时，变量之间用逗号隔开，这些变量之间的修饰字符串中必须包含’<span
+lang=EN-US>='</span>，来表示它是一个输出操作数，修饰字符稍微会做详细说明。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>输入部分看名字就知道是做输入之用，语法格式也与输出部分相同，唯一缺少的就是那个修饰的符号’<span
+lang=EN-US>='</span>。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>到这里详细说一下修饰字符，修饰字符很多，这里仅仅介绍常用修饰符。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>1</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>、寄存器绑定：这类修饰符修饰的变量跟某中寄存器绑定，随后的操作中，可直接操作相应的寄存器。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>修饰符<span
+lang=EN-US>  </span>绑定寄存器</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>a    %EAX</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>b    %EBX</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>c    %ECX</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>d    %EDX</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>S    %ESI</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>D   %EDI</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>q    EAX,
+EBX, ECX, EDX </span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>任意一个</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>r    EAX,
+EBX, ECX, EDX, ESI, EDI </span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>任意一个</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>A   </span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>被修饰是<span
+lang=EN-US>64</span>位变量，要与<span lang=EN-US>%EAX,%EDX</span>联合绑定</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>M  </span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>不绑定</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>另外，如果该寄存器已经被绑定，编译器会在合适的地方<span
+lang=EN-US>push</span>到堆栈，使用之后再回复此寄存器。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>2</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>、输出变量修饰</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>除了以上修饰符，还有一些只用于修饰输出变量，简单介绍如下：</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>‘<span
+lang=EN-US>&amp;’ </span>输出变量不能和输入变量共用同一个寄存器</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>‘<span
+lang=EN-US>=’  </span>输出变量只写</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>‘<span
+lang=EN-US>+’  </span>先将输出变量预先读入到对应寄存器</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>gcc
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>内联汇编规范最后一个部分是破坏描述，不论做什么操作，基本都需要寄存器的参与，对于只有<span
+lang=EN-US>c</span>代码的程序，编译器保护寄存器不会被不同模块写乱，但是对于内 联汇编，我们可能修改某些寄存器而破坏了<span
+lang=EN-US>gcc</span>原本保护的寄存器，所以内联汇编时我们需要告诉编译器哪些寄存器使我们所需要改变的，这里破坏描述符由逗号 隔开的字符串组成，每个字符串描述一种情况，一般是寄存器名，另外还有<span
+lang=EN-US>”memory”-</span>内存破坏描述符，内存描述符为了将寄存器保存的变量内容及时写回 到内存中去，避免在寄存器中存有多份不同拷贝，与<span
+lang=EN-US>c++</span>关键字<span lang=EN-US>volatile</span>类似。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>到这里简要介绍了<span
+lang=EN-US>gcc</span>内联汇编的部分语法，接下来举例说明此用法：</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+main()</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>{</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+sum = 0;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+var1 = 20;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+var2 = 15;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>asm
+volatile(   &quot;movl %1, %0\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&quot;addl
+%2, %0\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>:&quot;+a&quot;(sum)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>:&quot;r&quot;(var1),
+&quot;r&quot;(var2));</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>printf(&quot;result
+is %d\n&quot;, sum);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>return
+0;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>}</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>可以看到，在语句模板部分出现了占位符，其中<span
+lang=EN-US> 0,1,2 </span>根据变量出现的次数依次为<span lang=EN-US>sum, var1, var2</span>，所以，<span
+lang=EN-US>movl %1, %0 </span>表示把<span lang=EN-US>var1</span>存入<span
+lang=EN-US>sum</span>，<span lang=EN-US>addl %2, %0</span>表示把<span lang=EN-US>var2</span>与<span
+lang=EN-US>sum</span>相加结果存入<span lang=EN-US>sum</span>，后面描述部分都比较简单，因为<span
+lang=EN-US>addl</span>语句的关系，需要对<span lang=EN-US>%0</span>先读其值后计算，所以需要使用描述 符<span
+lang=EN-US>”+”</span>。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> 
+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+globali=200;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>/*</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> *
+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> */</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+main(int argc, char** argv) {</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+void *buf[2000];</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+int i=0;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+buf[0]=malloc(40960);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+strcat(buf[0],&quot;ssss\n&quot;);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+__asm__ __volatile__</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+(</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;lea globali,%%esi \n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;pushl %%ebx \n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;call printf\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;NOP\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+:&quot;=a&quot;(i):&quot;c&quot;(&amp;buf[0]),&quot;b&quot;(buf[0]) //</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>输入将<span
+lang=EN-US>&amp;buf[0]</span>的地址放入<span lang=EN-US>ecx,</span>将<span
+lang=EN-US>buf[0]</span>的值放入<span lang=EN-US>ebx,</span>输出<span lang=EN-US>eax</span>到变量<span
+lang=EN-US>i</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+//::&quot;c&quot;(&amp;buf[0]),&quot;b&quot;(buf[0]) //</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>输入将<span
+lang=EN-US>&amp;buf[0]</span>的地址放入<span lang=EN-US>ecx,</span>将<span
+lang=EN-US>buf[0]</span>的值放入<span lang=EN-US>ebx</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+sleep(10000);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+return (EXIT_SUCCESS);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>}</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>asm</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+(</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;movl $0x000a7373,%eax\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;movl %eax,0x14(%esp)\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;lea 0x14(%esp),%edx\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;mov %edx,(%esp)\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;call printf\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;NOP\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>相当于<span
+lang=EN-US>printf(&quot;ss\n&quot;);</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+main(int argc, char** argv) {</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+char src[256]=&quot;hello&quot;;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+char dst[256];</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+__asm__ __volatile__</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+(</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+&quot;.byte 0x90\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+&quot;.byte 0x90\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+&quot;.byte 0x90\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+&quot;movl $256,%%ecx\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+&quot;cld\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+&quot;rep movsb\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+::&quot;S&quot;(&amp;src[0]),&quot;D&quot;(&amp;dst[0])</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+printf(&quot;%s\n&quot;,dst);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+sleep(10000);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+return (EXIT_SUCCESS);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>}</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>/*</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>通过<span
+lang=EN-US>int 0x80</span>进行系统调用</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>参数传递：功能号和返回值通过<span
+lang=EN-US>%eax</span>来传递</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>参数一般在<span
+lang=EN-US>5</span>个以下的通过寄存器<span lang=EN-US>%ebx,%ecx.%edx,%esi,%edi</span>来传递</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>如果参数个数大于<span
+lang=EN-US>5</span>个，则要通过堆栈来传递</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>从<span
+lang=EN-US> /usr/include/asm/unistd.h</span>中可以看到<span lang=EN-US>exit</span>的功能号<span
+lang=EN-US>_NR_exit</span>为<span lang=EN-US>1</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>*/</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+__asm__ __volatile__</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+(</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;pusha \n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;movl $4,%%eax \n\t&quot;           //write</span><span style='font-size:
+12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>的功能号<span lang=EN-US>__NR_write</span>为<span
+lang=EN-US>4</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;movl $1,%%ebx \n\t&quot;           //STDOUT_FILENO=1</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>      
+     &quot;movl $0x6c6c6568,%%ecx\n\t&quot;   //&quot;hell&quot;</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>放入<span
+lang=EN-US>ecx</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;movl %%ecx,-0x8(%%esp) \n\t&quot;  //ecx</span><span style='font-size:
+12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>写入栈<span lang=EN-US>esp-8</span>处</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;movl $0x00000a6f,%%ecx\n\t&quot;   //&quot;o\n&quot;</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>放入<span
+lang=EN-US>ecx</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;movl %%ecx,-0x4(%%esp) \n\t&quot;  //&quot;ecx</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>写入栈<span
+lang=EN-US>esp-4</span>处</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;leal -0x8(%%esp),%%ecx\n\t&quot;   //</span><span style='font-size:12.0pt;
+font-family:"Microsoft YaHei UI",sans-serif'>取栈<span lang=EN-US>esp-8</span>处地址放入<span
+lang=EN-US>ecx</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;movl $6,%%edx\n\t&quot;            //</span><span style='font-size:12.0pt;
+font-family:"Microsoft YaHei UI",sans-serif'>长度<span lang=EN-US>6</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;int $0x80 \n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;popa \n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+//write(STDOUT_FILENO,&quot;hello\n&quot;,6);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;movl $1,%%eax \n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>     
+      &quot;movl $0,%%ebx \n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+&quot;int $0x80\n\t&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+//exit(0);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>           
+::</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+); </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>linux</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>下位于数据段的代码无法执行<span
+lang=EN-US>?</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>unsigned
+char mycode[100]={0x90,0x90,0x90,0x90,0xc3};</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>放在<span
+lang=EN-US>.rodata</span>段可以正常执行</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>改成</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>const
+unsigned char mycode[100]={0x90,0x90,0x90,0x90,0xc3};</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>((void
+(*)(void))&amp;mycode[0])();//</span><span style='font-size:12.0pt;font-family:
+"Microsoft YaHei UI",sans-serif'>取<span lang=EN-US>mycode</span>地址转换成<span
+lang=EN-US>(void (*)(void))</span>函数指针调用</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>或者调用<span
+lang=EN-US>mprotect</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
+&lt;sys/mman.h&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+mprotect(const void *addr, size_t len, int prot);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>mprotect</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>更改<span
+lang=EN-US>addr</span>内存页的保护属性，<span lang=EN-US>addr</span>必需是页边缘对齐。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>计算按页对齐<span
+lang=EN-US> addr &amp; ~(pagesize-1)</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>成功<span
+lang=EN-US>mprotect</span>返回零，错误返回<span lang=EN-US> -1</span>，并把<span
+lang=EN-US> errno </span>设置为合适的值。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>int
+pagesize=getpagesize();</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>char
+*str=&quot;abcdefghijk&quot;;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>mprotect((void*)((int)str
+&amp; ~(pagesize-1)),pagesize,PROT_READ|PROT_WRITE|PROT_EXEC);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>*str='v';</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>*(str+1)='k'; 
+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>windows</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>下可以调用<span
+lang=EN-US>VirtualProtect</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>

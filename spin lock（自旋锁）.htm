@@ -1,0 +1,327 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:等线;
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:"Microsoft YaHei UI";
+	panose-1:2 11 5 3 2 2 4 2 2 4;}
+@font-face
+	{font-family:"\@Microsoft YaHei UI";
+	panose-1:2 11 5 3 2 2 4 2 2 4;}
+@font-face
+	{font-family:"\@等线";
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:10.5pt;
+	font-family:等线;}
+.MsoChpDefault
+	{font-family:等线;}
+ /* Page Definitions */
+ @page WordSection1
+	{size:595.3pt 841.9pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	layout-grid:15.6pt;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+
+</head>
+
+<body lang=ZH-CN style='text-justify-trim:punctuation'>
+
+<div class=WordSection1 style='layout-grid:15.6pt'>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>spin
+lock</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>（自旋锁）</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>spin
+lock </span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>是在<span
+lang=EN-US> SMP </span>系统上<span lang=EN-US> kernel </span>为了保护一段关键代码的执行或者关键数据结构的一种保护机制。是实现<span
+lang=EN-US> synchronization </span>的一种手段。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>spin
+lock </span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>的关键是在一个<span
+lang=EN-US> spin-wait loop </span>里不断地进行<span lang=EN-US> test-and-set </span>操作：</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>    
+processor A                                     processor B</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>--------------------------------------------------------------------------------</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>Do                                               
+DO</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+test_and_set(spinlock);                            test_and_set(spinlock)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>Until
+(spinlock == free);                         Until (spinlock == free);</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>begin                                            
+begin</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+do_critical_section();                            do_critical_section();</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>end                           
+                   end</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>release_spinlock();                              
+release_spinlock()</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>上面是<span
+lang=EN-US> processor A </span>和<span lang=EN-US> processor B </span>的一个线程里的<span
+lang=EN-US> spin-wait loop</span>，在执行关键的<span lang=EN-US> critical section </span>里的代码，<span
+lang=EN-US>processor A </span>和<span lang=EN-US> processor B </span>需要获了空闲的<span
+lang=EN-US> sinplock</span>，于是在<span lang=EN-US> spin-wait loop </span>里不断的进行<span
+lang=EN-US> test-and-set </span>操作，测试<span lang=EN-US> spinlock </span>是否为空闲（或者是否被锁），直到这个<span
+lang=EN-US> spinlock </span>没被锁住（<span lang=EN-US>unlock</span>），执行完关键的代码（或者修改关键的数据）后，释放<span
+lang=EN-US> spinlock</span>（或者打开锁）。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>test-and-set
+</span><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>在获得<span
+lang=EN-US> spinlock </span>的同时，它会进行<span lang=EN-US> lock </span>操作，它是一个：不断测试并尝试上锁的过程。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>在<span
+lang=EN-US> x86/x64 </span>平台上实现<span lang=EN-US> test-and-set </span>操作通常使用下面这条指令：</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>lock
+bts dword ptr [spinlock], 0</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>当然也可以使用<span
+lang=EN-US> xchg </span>指令来实现<span lang=EN-US> test-and-set </span>操作：</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>xchg
+eax, [spinlock]</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>我们推荐使用<span
+lang=EN-US> lock bts </span>指令来实现以获得更高的效率。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>下面是一段摘自<span
+lang=EN-US> windows 7 x64 </span>上<span lang=EN-US> kernel </span>里的<span
+lang=EN-US> KiIdleLoop() </span>上的代码：</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d2383
+f0480fba6b3000  lock bts qword ptr [rbx+30h],0                        ;
+PrcbLock</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d238a
+7334            jae     nt!KiIdleLoop+0xb0 (fffff800`044d23c0)        ;
+PrcbLock is unlocked?</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>nt!KiIdleLoop+0x7c:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d238c
+33f6            xor     esi,esi</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>nt!KiIdleLoop+0x7e:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d238e
+ffc6            inc     esi</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d2390
+8535368f2300    test    dword ptr [nt!HvlLongSpinCountMask
+(fffff800`0470b2cc)],esi</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d2396
+7513            jne     nt!KiIdleLoop+0x9b (fffff800`044d23ab)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>nt!KiIdleLoop+0x88:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d2398
+f705c68c230040000000 test dword ptr [nt!HvlEnlightenments (fffff800`0470b068)],40h</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d23a2
+7407            je      nt!KiIdleLoop+0x9b (fffff800`044d23ab)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>nt!KiIdleLoop+0x94:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d23a4
+8bce            mov     ecx,esi</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d23a6
+e895240a00      call    nt!HvlNotifyLongSpinWait (fffff800`04574840)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>nt!KiIdleLoop+0x9b:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d23ab
+f390            pause</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d23ad
+48f7433001000000 test    qword ptr [rbx+30h],1</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d23b5
+75d7            jne     nt!KiIdleLoop+0x7e (fffff800`044d238e)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>nt!KiIdleLoop+0xa7:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d23b7
+f0480fba6b3000  lock bts qword ptr [rbx+30h],0                        ;
+test-and-set </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d23be
+72ce            jb      nt!KiIdleLoop+0x7e (fffff800`044d238e)        ; ProbLock
+is locked ?</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>...
+...</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>nt!KiIdleLoop+0x112:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d2422
+4883633000      and     qword ptr [rbx+30h],0                         ; release
+spinlock</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>fffff800`044d2427
+e91effffff      jmp     nt!KiIdleLoop+0x3a (fffff800`044d234a)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>代码中<span
+lang=EN-US> lock bts qword ptr [rbx+30h],0 </span>指令来测试<span lang=EN-US> lock </span>是否被锁住，并且尝试上锁，最后使用完<span
+lang=EN-US> spinlock </span>后进行释放<span lang=EN-US> spinlock</span>，以便其它<span
+lang=EN-US> processor </span>可以使用<span lang=EN-US> spinlock</span>。</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>这里有一个简单的代码，来自于<span
+lang=EN-US> Wikipedia </span>的示例：</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>lock:   
+dd  0                     ; spinlock: 0 = unlocked, 1 = locked</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>spin_lock:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+mov eax, 1                 ; for test-and-set</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>loop:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>;
+Now: do test-and-set</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>;     
+test the spinlock is unlocked and lock the spinlock</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+xchg eax, [lock]</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+test eax, eax</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+jnz loop                   ; locked ? loop</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+... ...                    ; unlocked ? do something</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>spin_unlock:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+mov eax, 0</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>       
+xchg eax, [lock]           ; release spinlock</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>这是一种比较古老的实现方法，<span
+lang=EN-US>xchg </span>指令具有自动<span lang=EN-US> lock </span>总线的功能，因此选择使用它来进行原子操作</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>
