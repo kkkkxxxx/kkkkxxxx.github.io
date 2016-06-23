@@ -7,9 +7,6 @@
 <!--
  /* Font Definitions */
  @font-face
-	{font-family:宋体;
-	panose-1:2 1 6 0 3 1 1 1 1 1;}
-@font-face
 	{font-family:"Cambria Math";
 	panose-1:2 4 5 3 5 4 6 3 2 4;}
 @font-face
@@ -22,9 +19,6 @@
 	{font-family:"\@Microsoft YaHei UI";
 	panose-1:2 11 5 3 2 2 4 2 2 4;}
 @font-face
-	{font-family:"\@宋体";
-	panose-1:2 1 6 0 3 1 1 1 1 1;}
-@font-face
 	{font-family:"\@等线";
 	panose-1:2 1 6 0 3 1 1 1 1 1;}
  /* Style Definitions */
@@ -35,15 +29,8 @@
 	text-justify:inter-ideograph;
 	font-size:10.5pt;
 	font-family:等线;}
-p.msonormal0, li.msonormal0, div.msonormal0
-	{mso-style-name:msonormal;
-	margin-right:0cm;
-	margin-left:0cm;
-	font-size:12.0pt;
-	font-family:宋体;}
 .MsoChpDefault
-	{font-size:10.0pt;
-	font-family:等线;}
+	{font-family:等线;}
  /* Page Definitions */
  @page WordSection1
 	{size:595.3pt 841.9pt;
@@ -59,6 +46,12 @@ div.WordSection1
 <body lang=ZH-CN style='text-justify-trim:punctuation'>
 
 <div class=WordSection1 style='layout-grid:15.6pt'>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>Linux</span><span
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>堆溢出之<span
+lang=EN-US>fastbin</span>控制<span lang=EN-US>malloc</span>返回地址</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
 
 <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>#include
 &lt;stdio.h&gt;</span></p>
@@ -97,8 +90,8 @@ buf0=malloc(32);</span></p>
 <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
 buf1=malloc(32);</span></p>
 
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'> 
-  free(buf1);</span></p>
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
+free(buf1);</span></p>
 
 <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>   
 free(buf0);</span></p>
@@ -225,6 +218,8 @@ printf(&quot;kkkkkk\n&quot;);</span></p>
 return (EXIT_SUCCESS);</span></p>
 
 <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>}</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
 
 </div>
 
