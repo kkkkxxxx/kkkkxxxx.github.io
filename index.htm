@@ -7,6 +7,9 @@
 <!--
  /* Font Definitions */
  @font-face
+	{font-family:宋体;
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
 	{font-family:"Cambria Math";
 	panose-1:2 4 5 3 5 4 6 3 2 4;}
 @font-face
@@ -20,6 +23,9 @@
 	panose-1:2 11 5 3 2 2 4 2 2 4;}
 @font-face
 	{font-family:"\@等线";
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:"\@宋体";
 	panose-1:2 1 6 0 3 1 1 1 1 1;}
  /* Style Definitions */
  p.MsoNormal, li.MsoNormal, div.MsoNormal
@@ -35,10 +41,22 @@ a:link, span.MsoHyperlink
 a:visited, span.MsoHyperlinkFollowed
 	{color:#954F72;
 	text-decoration:underline;}
+p.msonormal0, li.msonormal0, div.msonormal0
+	{mso-style-name:msonormal;
+	margin-right:0cm;
+	margin-left:0cm;
+	font-size:12.0pt;
+	font-family:宋体;}
+p.msochpdefault, li.msochpdefault, div.msochpdefault
+	{mso-style-name:msochpdefault;
+	margin-right:0cm;
+	margin-left:0cm;
+	font-size:12.0pt;
+	font-family:等线;}
 .MsoChpDefault
-	{font-family:等线;}
- /* Page Definitions */
- @page WordSection1
+	{font-size:10.0pt;
+	font-family:等线;}
+@page WordSection1
 	{size:595.3pt 841.9pt;
 	margin:72.0pt 90.0pt 72.0pt 90.0pt;
 	layout-grid:15.6pt;}
@@ -53,92 +71,96 @@ div.WordSection1
 
 <div class=WordSection1 style='layout-grid:15.6pt'>
 
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/Linux%E5%A0%86%E6%BA%A2%E5%87%BA%E4%B9%8Bfastbin%E6%8E%A7%E5%88%B6malloc%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80.htm">Linux<span
-lang=EN-US><span lang=EN-US>堆溢出之fastbin</span></span><span lang=EN-US><span
-lang=EN-US>控制malloc</span></span><span lang=EN-US><span lang=EN-US>返回地址</span></span></a></span></p>
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%;border-collapse:collapse'>
+ <tr>
+  <td width="67%" valign=top style='width:67.56%;border:solid #BFBFBF 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:22.0pt;font-family:"Microsoft YaHei UI",sans-serif'>Linux</span></p>
+  </td>
+  <td width="32%" valign=top style='width:32.44%;border:solid #BFBFBF 1.0pt;
+  border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:22.0pt;font-family:"Microsoft YaHei UI",sans-serif'>Windows</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="67%" valign=top style='width:67.56%;border:solid #BFBFBF 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/Linux%E5%A0%86%E6%BA%A2%E5%87%BA%E4%B9%8Bfastbin%E6%8E%A7%E5%88%B6malloc%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80.htm">Linux<span
+  lang=EN-US><span lang=EN-US>堆溢出之fastbin</span></span><span lang=EN-US><span
+  lang=EN-US>控制malloc</span></span><span lang=EN-US><span lang=EN-US>返回地址</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/linux%E5%88%A9%E7%94%A8PLT%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A.htm">linux<span
+  lang=EN-US><span lang=EN-US>利用PLT</span></span><span lang=EN-US><span
+  lang=EN-US>延迟绑定</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/gcc%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96.htm">gcc<span
+  lang=EN-US><span lang=EN-US>内联汇编</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/IsBadReadPtr%20analogue%20on%20Unix.htm">IsBadReadPtr
+  analogue on Unix</a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/linux%20kdb%E7%BC%96%E8%AF%91%20%E5%AE%89%E8%A3%85.htm">linux
+  kdb<span lang=EN-US><span lang=EN-US>编译</span></span><span lang=EN-US><span
+  lang=EN-US> </span></span><span lang=EN-US><span lang=EN-US>安装</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/linux%20kdb%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95.htm">linux
+  kdb<span lang=EN-US><span lang=EN-US>的基本用法</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/linux%20%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8A%AB%E6%8C%81.htm">linux
+  <span lang=EN-US><span lang=EN-US>系统调用劫持</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8.htm"><span
+  lang=EN-US><span lang=EN-US>一个简单的字符设备驱动</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E4%B8%AD%E6%96%AD%E7%A8%8B%E5%BA%8F.htm"><span
+  lang=EN-US><span lang=EN-US>一个简单的中断程序</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/linux%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B.htm">linux<span
+  lang=EN-US><span lang=EN-US>内核线程</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/Linux%20Completion%E6%9C%BA%E5%88%B6.htm">Linux
+  Completion<span lang=EN-US><span lang=EN-US>机制</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E6%93%8D%E4%BD%9C%E6%96%87%E4%BB%B6.htm">linux<span
+  lang=EN-US><span lang=EN-US>内核中操作文件</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/Linux%E5%86%85%E6%A0%B8%E4%B8%AD%E9%80%9A%E8%BF%87%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%8E%B7%E5%8F%96%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84.htm">Linux<span
+  lang=EN-US><span lang=EN-US>内核中通过文件描述符获取绝对路径</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  </td>
+  <td width="32%" valign=top style='width:32.44%;border-top:none;border-left:
+  none;border-bottom:solid #BFBFBF 1.0pt;border-right:solid #BFBFBF 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/%E6%B5%8B%E9%87%8F%E4%B8%80%E6%AE%B5%E4%BB%A3%E7%A0%81%E7%9A%84%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4.htm"><span
+  lang=EN-US><span lang=EN-US>测量一段代码的执行时间</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
+  href="https://kkkkxxxx.github.io/spin%20lock%EF%BC%88%E8%87%AA%E6%97%8B%E9%94%81%EF%BC%89.htm">spin
+  lock<span lang=EN-US><span lang=EN-US>（自旋锁）</span></span></a></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
+  </td>
+ </tr>
+</table>
 
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/linux%E5%88%A9%E7%94%A8PLT%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A.htm">linux<span
-lang=EN-US><span lang=EN-US>利用PLT</span></span><span lang=EN-US><span
-lang=EN-US>延迟绑定</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/gcc%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96.htm">gcc<span
-lang=EN-US><span lang=EN-US>内联汇编</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/IsBadReadPtr%20analogue%20on%20Unix.htm">IsBadReadPtr
-analogue on Unix</a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/linux%20kdb%E7%BC%96%E8%AF%91%20%E5%AE%89%E8%A3%85.htm">linux
-kdb<span lang=EN-US><span lang=EN-US>编译</span></span><span lang=EN-US><span
-lang=EN-US> </span></span><span lang=EN-US><span lang=EN-US>安装</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/linux%20kdb%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95.htm">linux
-kdb<span lang=EN-US><span lang=EN-US>的基本用法</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/linux%20%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8A%AB%E6%8C%81.htm">linux
-<span lang=EN-US><span lang=EN-US>系统调用劫持</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8.htm"><span
-lang=EN-US><span lang=EN-US>一个简单的字符设备驱动</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E4%B8%AD%E6%96%AD%E7%A8%8B%E5%BA%8F.htm"><span
-lang=EN-US><span lang=EN-US>一个简单的中断程序</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/linux%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B.htm">linux<span
-lang=EN-US><span lang=EN-US>内核线程</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/Linux%20Completion%E6%9C%BA%E5%88%B6.htm">Linux
-Completion<span lang=EN-US><span lang=EN-US>机制</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E6%93%8D%E4%BD%9C%E6%96%87%E4%BB%B6.htm">linux<span
-lang=EN-US><span lang=EN-US>内核中操作文件</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/Linux%E5%86%85%E6%A0%B8%E4%B8%AD%E9%80%9A%E8%BF%87%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%8E%B7%E5%8F%96%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84.htm">Linux<span
-lang=EN-US><span lang=EN-US>内核中通过文件描述符获取绝对路径</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'><a
-href="https://kkkkxxxx.github.io/spin%20lock%EF%BC%88%E8%87%AA%E6%97%8B%E9%94%81%EF%BC%89.htm">spin
-lock<span lang=EN-US><span lang=EN-US>（自旋锁）</span></span></a></span></p>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+style='font-size:12.0pt;font-family:"Microsoft YaHei UI",sans-serif'>https://github.com/kkkkxxxx</span></p>
 
 </div>
 
