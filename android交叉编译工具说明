@@ -1,0 +1,28 @@
+android-ndk-r10e-linux-x86.bin
+
+/home/xxxx/android-ndk-r10e/build/tools/make-standalone-toolchain.sh --platform=android-5 --install-dir=/opt/android-toolchain --arch=arm
+
+
+
+$ ./build/tools/make-standalone-toolchain.sh --help
+Usage: make-standalone-toolchain.sh [options]
+
+Generate a customized Android toolchain installation that includes
+a working sysroot. The result is something that can more easily be
+used as a standalone cross-compiler, e.g. to run configure and
+make scripts.
+
+Valid options (defaults are in brackets):
+
+  --help                   Print this help.
+  --verbose                Enable verbose mode.
+  --toolchain=       Specify toolchain name
+  --llvm-version=     Specify LLVM version
+  --arch=            Specify target architecture [arm]
+  --ndk-dir=         Take source files from NDK at [.]
+  --system=          Specify host system [windows]
+  --package-dir=     Place package file in [/tmp/ndk-Administrator]
+  --install-dir=     Don't create package, install files to instead.
+  --platform=        Specify target Android platform/API level. [android-3]
+
+    当不指定 platform 时，此脚本是直接复制 android-3 的文件到交叉编译工具链，如果想用一些android的新特性，建议指定 platform 为 android-9 或更高，当然也可以指定最新的 gcc 4.7 或 llvm 编译器，只要设置 toolchain 或 llvm-version 即可，生成其他架构的工具链，请指定 arch 参数，脚本默认是 arm 架构的。设置不同的参数，大家可以创建不同类型及版本的标准的交叉编译工具链(Cross Toolchain)。
