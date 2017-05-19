@@ -1,0 +1,7 @@
+Visual Studio 2017编译的程序
+
+windbg下调试
+0:000> bu ConsoleApplication1!main下断点卡死。
+
+解决办法：
+项目-属性-链接器-调试-生成调试信息:生成经过优化以共享和发布的调试信息 (/DEBUG:FULL)
